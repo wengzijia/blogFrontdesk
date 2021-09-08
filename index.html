@@ -8,6 +8,7 @@
 	<title>Document</title>
 	<link rel="stylesheet" href="./bootstrap/css/bootstrap.css">
 	<link rel="stylesheet" href="./css/base.css">
+	<link href="https://cdn.bootcdn.net/ajax/libs/nprogress/0.2.0/nprogress.css" rel="stylesheet">
 	<style>
 		.content .item {
 			margin-top: 10px;
@@ -67,13 +68,13 @@
 						<li class="dropdown">
 								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
 									aria-haspopup="true" aria-expanded="false">分类 <span class="caret"></span></a>
-								<ul class="dropdown-menu">
-									<li><a href="/cate.html?id=2">html</a></li>
+								<ul class="dropdown-menu" id="cates">
+									<!-- <li><a href="/cate.html?id=2">html</a></li>
 									<li><a href="/cate.html?id=2">css</a></li>
 									<li><a href="/cate.html?id=2">javascript</a></li>
 									<li role="separator" class="divider"></li>
 									<li><a href="/cate.html?id=2">mysql</a></li>
-									<li><a href="/cate.html?id=2">Linux</a></li>
+									<li><a href="/cate.html?id=2">Linux</a></li> -->
 								</ul>
 							</li>
 						<li><a href="/tags.html">标签</a></li>
@@ -85,7 +86,7 @@
 
 		<div class="content">
 			<h4>最新文章</h4>
-			<div class="artlist">
+			<div class="artlist" id="articles">
 				<div class='item row'>
 					<div class="col-md-2">
 						<img src="http://placehold.it/170x100/ff3333/ffffff?text=like%20you" alt="">
@@ -97,65 +98,11 @@
 					</div>
 					<hr>
 				</div>
-				<div class='item row'>
-					<div class="col-md-2">
-						<img src="http://placehold.it/170x100/ff3333/ffffff?text=like%20you" alt="">
-					</div>
-					<div class="col-md-10">
-						<div class="date ">作者：admin 、 2019-12-08 、分类：前端</div>
-						<div class="title">这是介绍中vscode...</div>
-						<div class="intro">这是介绍中vscode这是介绍中vscode这是介绍中vscode...</div>
-					</div>
-					<hr>
-				</div>
-				<div class='item row'>
-					<div class="col-md-2">
-						<img src="http://placehold.it/170x100/ff3333/ffffff?text=like%20you" alt="">
-					</div>
-					<div class="col-md-10">
-						<div class="date">作者：admin 、 2019-12-08 、分类：前端</div>
-						<div class="title">这是介绍中vscode...</div>
-						<div class="intro">这是介绍中vscode这是介绍中vscode这是介绍中vscode...</div>
-					</div>
-					<hr>
-				</div>
-				<div class='item row'>
-					<div class="col-md-2">
-						<img src="http://placehold.it/170x100/ff3333/ffffff?text=like%20you" alt="">
-					</div>
-					<div class="col-md-10">
-						<div class="date ">作者：admin 、 2019-12-08 、分类：前端</div>
-						<div class="title">这是介绍中vscode...</div>
-						<div class="intro">这是介绍中vscode这是介绍中vscode这是介绍中vscode...</div>
-					</div>
-					<hr>
-				</div>
-				<div class='item row'>
-					<div class="col-md-2">
-						<img src="http://placehold.it/170x100/ff3333/ffffff?text=like%20you" alt="">
-					</div>
-					<div class="col-md-10">
-						<div class="date ">作者：admin 、 2019-12-08 、分类：前端</div>
-						<div class="title">这是介绍中vscode...</div>
-						<div class="intro">这是介绍中vscode这是介绍中vscode这是介绍中vscode...</div>
-					</div>
-					<hr>
-				</div>
-				<div class='item row'>
-					<div class="col-md-2">
-						<img src="http://placehold.it/170x100/ff3333/ffffff?text=like%20you" alt="">
-					</div>
-					<div class="col-md-10">
-						<div class="date ">作者：admin 、 2019-12-08 、分类：前端</div>
-						<div class="title">这是介绍中vscode...</div>
-						<div class="intro">这是介绍中vscode这是介绍中vscode这是介绍中vscode...</div>
-					</div>
-					<hr>
-				</div>
+				
 
 			</div>
 		</div>
-		<button type="button" class="btn  btn-block">查看更多</button>
+		<button type="button" id="loadMore" class="btn  btn-block">查看更多</button>
 		<hr>
 
 		<div class="footer" style="text-align:center;font-size: 14px; color: #999;margin:10px 0;">
@@ -165,5 +112,116 @@
 </body>
 <script src="./js/jquery.js"></script>
 <script src="./bootstrap/js/bootstrap.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/layer/3.5.1/layer.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/nprogress/0.2.0/nprogress.js"></script>
 
+<script>
+	
+	let page = 1;
+	let pagesize = 2;
+	let isFinish = false; // 一个开关变量，记录文章是否已经加载完毕了
+
+	// 初始化数据
+	initData();
+	// 加载更多
+	$("#loadMore").on('click',function(){
+		if(isFinish){
+			layer.msg('数据已经加载完毕了',{icon:0});
+			return;
+		}
+		// loading提示
+		$(this).prop('disabled',true).html('loading....')
+		page++;
+		loadArticle(page,pagesize).then(res=>{
+			if(res.length < pagesize){
+				// 说明数据已经加载完毕了
+				isFinish = true;
+			}
+			$(this).prop('disabled',false).html('查看更多')
+			let articlesHtml = renderArticle(res)
+			let  oldHtml = $("#articles").html();
+			$("#articles").html(oldHtml + articlesHtml);
+		})
+	})
+	
+	function loadArticle(page,pagesize){
+		NProgress.set(0.4); // 开启
+		// $.ajax此函数返回的是一个promise
+		return $.ajax({
+			url:'http://127.0.0.1:4000/api/article',
+			data:{page,pagesize},
+			complete(){
+				NProgress.done(); // 关闭
+			}
+		})
+	}
+
+	function loadCate(){
+		// $.ajax此函数返回的是一个promise
+		return $.ajax({
+			url:'http://127.0.0.1:4000/api/cate'
+		})
+	}
+
+	async function initData(){
+		NProgress.set(0.4) 
+		// 加载文章和分类数据
+		let pro1 = loadArticle(page,pagesize);
+		let pro2 = loadCate();
+		let data = await Promise.all([pro1,pro2])
+		NProgress.done()
+		let [articles,cates] = data;
+		// 渲染所有的分类数据
+		let lis = renderCate(cates);
+		// 渲染文章数据
+		let divs = renderArticle(articles);
+		$("#cates").html(lis)
+		$("#articles").html(divs)
+
+		console.log(cates,articles);
+	}
+
+	// 渲染分类数据
+	function renderCate(cates){
+		let lis = '';
+		cates.forEach((cat) => {
+			let {cate_id,cate_name} = cat;
+			// 拼接字符串li
+			lis += `<li><a href="/cate.html?id=${cate_id}">${cate_name}</a></li>`
+		});
+
+		return lis;
+	}
+
+	// 渲染文章数据
+	function renderArticle(articles){
+		let divs = '';
+		articles.forEach((art) => {
+			let {id,title,cat_id,cate_name,author,img,add_time} = art;
+			if(!img){
+				img = 'http://placehold.it/200x140/ffde00/aaabbb?text=dede'
+			}else {
+				img = 'http://127.0.0.1:4000/' + img;
+			}
+			
+			
+			// 拼接字符串li
+			divs += `<div class='item row'>
+					<div class="col-md-2">
+						<img src="${img}" alt="">
+					</div>
+					<div class="col-md-10">
+						<div class="date ">作者：${author} 、 ${add_time} 、分类：<a href="/cate.html?cat_id=${cat_id}">${cate_name}</a></div>
+						<a href='/detail.html?id=${id}'><div class="title">${title}</div></a>
+					</div>
+					<hr>
+			</div>
+			`
+		});
+
+		return divs;
+	}
+
+	
+</script>
 </html>
