@@ -8,6 +8,7 @@
 	<title>Document</title>
 	<link rel="stylesheet" href="./bootstrap/css/bootstrap.css">
 	<link rel="stylesheet" href="./css/base.css">
+	<link href="https://cdn.bootcdn.net/ajax/libs/nprogress/0.2.0/nprogress.css" rel="stylesheet">
 	<style>
 		.crumbs {
 			font-size: 14px;
@@ -60,7 +61,7 @@
 						<span class="icon-bar"></span>
 					</button>
 					<a class="navbar-brand" href="#" style="display:flex;">
-						汪玮的博客
+						翁梓佳的博客
 					</a>
 				</div>
 
@@ -68,17 +69,12 @@
 				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 
 					<ul class="nav navbar-nav navbar-right">
-						<li><a href="#">首页</a></li>
+						<li><a href="/">首页</a></li>
 						<li class="dropdown">
 							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
 								aria-haspopup="true" aria-expanded="false">分类 <span class="caret"></span></a>
-							<ul class="dropdown-menu">
-								<li><a href="/cate.html?id=2">html</a></li>
-								<li><a href="/cate.html?id=2">css</a></li>
-								<li><a href="/cate.html?id=2">javascript</a></li>
-								<li role="separator" class="divider"></li>
-								<li><a href="/cate.html?id=2">mysql</a></li>
-								<li><a href="/cate.html?id=2">Linux</a></li>
+							<ul class="dropdown-menu" id="cates">
+								
 							</ul>
 						</li>
 						<li><a href="/tags.html">标签</a></li>
@@ -93,8 +89,8 @@
 		</div>
 
 		<div class="content">
-			<div class="artlist">
-				<div class='item row'>
+			<div class="artlist" id="cateArticles">
+				<!-- <div class='item row'>
 					<div class="col-md-2">
 						<img src="http://placehold.it/170x100/ff3333/ffffff?text=like%20you" alt="">
 					</div>
@@ -104,75 +100,183 @@
 						<div class="intro">这是介绍中vscode这是介绍中vscode这是介绍中vscode...</div>
 					</div>
 					<hr>
-				</div>
-				<div class='item row'>
-					<div class="col-md-2">
-						<img src="http://placehold.it/170x100/ff3333/ffffff?text=like%20you" alt="">
-					</div>
-					<div class="col-md-10">
-						<div class="date ">作者：admin 、 2019-12-08 、分类：前端</div>
-						<div class="title">这是介绍中vscode...</div>
-						<div class="intro">这是介绍中vscode这是介绍中vscode这是介绍中vscode...</div>
-					</div>
-					<hr>
-				</div>
-				<div class='item row'>
-					<div class="col-md-2">
-						<img src="http://placehold.it/170x100/ff3333/ffffff?text=like%20you" alt="">
-					</div>
-					<div class="col-md-10">
-						<div class="date">作者：admin 、 2019-12-08 、分类：前端</div>
-						<div class="title">这是介绍中vscode...</div>
-						<div class="intro">这是介绍中vscode这是介绍中vscode这是介绍中vscode...</div>
-					</div>
-					<hr>
-				</div>
-				<div class='item row'>
-					<div class="col-md-2">
-						<img src="http://placehold.it/170x100/ff3333/ffffff?text=like%20you" alt="">
-					</div>
-					<div class="col-md-10">
-						<div class="date ">作者：admin 、 2019-12-08 、分类：前端</div>
-						<div class="title">这是介绍中vscode...</div>
-						<div class="intro">这是介绍中vscode这是介绍中vscode这是介绍中vscode...</div>
-					</div>
-					<hr>
-				</div>
-				<div class='item row'>
-					<div class="col-md-2">
-						<img src="http://placehold.it/170x100/ff3333/ffffff?text=like%20you" alt="">
-					</div>
-					<div class="col-md-10">
-						<div class="date ">作者：admin 、 2019-12-08 、分类：前端</div>
-						<div class="title">这是介绍中vscode...</div>
-						<div class="intro">这是介绍中vscode这是介绍中vscode这是介绍中vscode...</div>
-					</div>
-					<hr>
-				</div>
-				<div class='item row'>
-					<div class="col-md-2">
-						<img src="http://placehold.it/170x100/ff3333/ffffff?text=like%20you" alt="">
-					</div>
-					<div class="col-md-10">
-						<div class="date ">作者：admin 、 2019-12-08 、分类：前端</div>
-						<div class="title">这是介绍中vscode...</div>
-						<div class="intro">这是介绍中vscode这是介绍中vscode这是介绍中vscode...</div>
-					</div>
-					<hr>
-				</div>
-
+				</div> -->
+				
 			</div>
 		</div>
 
-		<button type="button" class="btn  btn-block">查看更多</button>
+		<button type="button" id="loadMore" class="btn  btn-block">查看更多</button>
 		<hr>
 
 		<div class="footer" style="text-align:center;font-size: 14px; color: #999;margin:10px 0;">
-			首页 | 主站 | GitHub | created at 2020/02/4 | Powered by 汪玮
+			首页 | 主站 | GitHub | created at 2020/02/4 | Powered by 翁梓佳
 		</div>
 	</div>
 </body>
 <script src="./js/jquery.js"></script>
 <script src="./bootstrap/js/bootstrap.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/layer/3.5.1/layer.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/nprogress/0.2.0/nprogress.js"></script>
+<script src="https://momentjs.bootcss.com/downloads/moment.min.js"></script>
+<script>
+	let page =1;
+	let pagesize = 6;
+	let isFinish = false; // 一个开关变量,记录文章数据是否加载完毕了
+	let imgs;
+	let url = location.href; // 链接地址
+    // let reg = /\?cat_id=(\d+)/; // 正则匹配 ?cat_id=1数字，一次或者多次
+    let reg = /\?cat_id=(.+)\&?/; // 万能匹配
+    let [,cat_id] = Array.from(url.match(reg)); // 伪数组转为真数组,用逗号舍去第一个,并把id解构
+    // console.log(cat_id)
+	// 先把cat_id转为整形，然后再判断是否NaN
+	if(isNaN(parseInt(cat_id))){
+        // not a number  说明不是数字
+        layer.msg('请求错误')
+        location.href = '/'
+    }
 
+	// 初始化数据
+	initData()
+
+	// 加载更多
+	$("#loadMore").click(function(res){
+		// 如果加载完毕了，就退出，不再往下执行
+		if(isFinish){
+			layer.msg('数据加载完毕了',{icon:4})
+			return;
+		}
+		$(this).prop('disabled',true).html('loading...');
+		page++;
+		loadCateArticle(page,pagesize,cat_id).then(res=>{
+			if(res.length < pagesize){
+				// 说明数据已经加载完毕了
+				isFinish = true
+			}
+			$(this).prop('disabled',false).html('加载更多')
+			let oldarticlesHtml = $("#cateArticles").html()
+			let articlesHtml = renderCateArticle(res);
+			$("#cateArticles").html(oldarticlesHtml + articlesHtml)
+			imgs = document.querySelectorAll('img');
+			scrollHandle(imgs);
+		})
+	})
+
+	// 加载分类
+	function loadCate(){
+		return $.ajax({
+			url:"http://127.0.0.1:3696/api/cate"
+		})
+	}
+
+	// 加载分类文章
+	function loadCateArticle(page,pagesize,cat_id){
+		NProgress.set(0.4)   // 默认0.4
+		return $.ajax({
+			url:`http://127.0.0.1:3696/api/cateArticle?cat_id=${cat_id}`,
+			data:{page,pagesize},
+			// 不管成功或者失败都会触发
+			complete(){
+				NProgress.done() // 关闭
+			}
+		})
+	}
+
+	// 渲染分类数据
+	function renderCate(cates){
+		let lis = '';
+		cates.forEach(cate => {
+			let {id,name} = cate;
+			lis += `<li><a href="/cate.html?cat_id=${id}">${name}</a></li>`
+		});
+		return lis
+	}
+
+	// 渲染分类文章数据
+	function renderCateArticle(articles){
+		let divs = '';
+		articles.forEach(article=>{
+			let {id,img,author,addtime,cat_id,name,title,content} = article
+
+			if(!img){
+				img = 'https://img1.baidu.com/it/u=3049056019,2616222736&fm=26&fmt=auto&gp=0.jpg'
+			}else{
+				img = 'http://127.0.0.1:3696/' + img
+			}
+			addtime = (moment(addtime).format('YYYY-MM-DD, h:mm:ss'))
+			divs += `<div class='item row'>
+					<div class="col-md-2">
+						<img data-src="${img}" alt="">
+					</div>
+					<div class="col-md-10">
+						<div class="date ">作者：${author} 、 ${addtime}、分类：${name}</div>
+						<div class="title">${title}</div>
+						<div class="intro">${content}</div>
+					</div>
+					<hr>
+				</div>
+			`
+		})
+		imgs = document.querySelectorAll('img');
+		return divs;
+	}
+	
+
+	async function initData(){
+		NProgress.set(0.4)   // 默认0.4
+		let pro1 = loadCateArticle(page,pagesize,cat_id);
+		let pro2 = loadCate();
+		let data = await Promise.all([pro1,pro2]);
+		NProgress.done() // 关闭
+		let [articles,cates] = data
+		// console.log(articles,cates)
+		// 缓存到本地
+		localStorage.setItem('cates',JSON.stringify(cates));
+		let lis = renderCate(cates);
+		$('#cates').html(lis);
+		let divs = renderCateArticle(articles);
+		$("#cateArticles").html(divs)
+
+		// 执行懒加载
+		imgs = document.querySelectorAll('img');
+		scrollHandle(imgs);
+	}
+
+	window.onscroll = function (event) {
+		console.log('img',imgs)
+        scrollHandle(imgs)
+    };
+
+    function scrollHandle(imgs) {
+        // 获取网页卷上去的高度
+        let pageScrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+        // 获取可是视口的高度
+        let viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+        
+		console.log('pageScrollTop"',pageScrollTop)
+		console.log('viewportHeight',viewportHeight)
+		imgs.forEach(img => {
+			
+			// 获取当前元素距离视口顶部的距离
+			let {top} = img.getBoundingClientRect();
+
+            // 进入视口前提前100px加载。防止读到空白页面
+            if (top > 0 && top <  viewportHeight) {
+                // 说明当前图片已经进入到可视区，
+                if (img.getAttribute('loader') !== 'done') {
+                    let src = img.getAttribute('data-src')
+                    img.src = src;
+                    // 给当前img设置一个自定义属性，记录是否已经加载过
+                    img.setAttribute('loader', "done")
+                    console.log('请求')
+                } else {
+                    console.log('已经加载过了')
+                }
+
+            }
+
+        });
+
+
+    }
+</script>
 </html>

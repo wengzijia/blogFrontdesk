@@ -38,62 +38,35 @@
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 
                     <ul class="nav navbar-nav navbar-right">
-                        <li><a href="#">首页</a></li>
-                        <li><a href="#">分类</a></li>
-                        <li><a href="#">标签</a></li>
-                        <li><a href="#">关于</a></li>
+                        <li><a href="/">首页</a></li>
                         <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-                                aria-haspopup="true" aria-expanded="false">其他 <span class="caret"></span></a>
-                            <ul class="dropdown-menu">
-                                <li><a href="#">后台</a></li>
-                                <li><a href="#">Another action</a></li>
-                                <li><a href="#">Something else here</a></li>
-                                <li role="separator" class="divider"></li>
-                                <li><a href="#">Separated link</a></li>
-                            </ul>
-                        </li>
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                                    aria-haspopup="true" aria-expanded="false">分类 <span class="caret"></span></a>
+                                <ul class="dropdown-menu" id="cates">
+                                   
+                                </ul>
+                            </li>
+                        <li><a href="/tags.html">标签</a></li>
+                        <li><a href="/about.html">关于我</a></li>
                     </ul>
                 </div><!-- /.navbar-collapse -->
             </div><!-- /.container-fluid -->
         </nav>
-        <div style="text-align:center;">
-            <h4 class="crumbs" style="text-align:left;">当前位置：首页 / 体育 / OSX Mojave 编译 & 源码调试 openJdk 8</h4>
+        <div style="text-align:center;" id="info">
+            <!-- <h4 class="crumbs" style="text-align:left;">当前位置：首页 / 体育 / OSX Mojave 编译 & 源码调试 openJdk 8</h4>
             <h3>OSX Mojave 编译 & 源码调试 openJdk 8</h3>
             <div style="font-size: 14px; color: #999;"> 2019-04-26 /
-                分类：体育 / 点赞：888 <span class="label label-default">HTML</span> <span class="label label-default">JS</span>
-            </div>
+                分类：体育 / 点赞：888 
+            </div> -->
 
-            <p class="intro">
-                为了更好的理解和学习 Java 和 Hotspot 虚拟机，
-                于是在 OSX Mojave 编译 & 源码调试 openJdk 8，
-                中间遇到了很多问题，记录分享一下。
-            </p>
         </div>
         <div class="content">
             <div style="text-align: center;">
-                <img src="http://placehold.it/170x100/ff3333/ffffff?text=like%20you" alt="">
+                <img  id="img" style="width: 360px;" src="http://placehold.it/170x100/ff3333/ffffff?text=like%20you" alt="">
             </div>
-            <h1 style="text-align:center;"><b id="u2fid">CBA开战</b></h1>
-            <div>
-                <h1><b>CBA开战</b><b style="font-size: 2em;">CBA开战</b><b style="font-size: 2em;">CBA开战</b><b
-                        style="font-size: 2em;">CBA开战</b><b style="font-size: 2em;">CBA开战</b><b
-                        style="font-size: 2em;">CBA开战</b><b style="font-size: 2em;">CBA开战</b><b
-                        style="font-size: 2em;">CBA开战</b><b style="font-size: 2em;">CBA开战</b><b
-                        style="font-size: 2em;">CBA开战</b><b style="font-size: 2em;">CBA开战</b></h1>
-            </div>
-            <div style="text-align:center;"><br></div>
-            <p style="text-align:center;"><br></p>
-            <p style="text-align:center;"><br></p>
-            <p style="text-align:center;">
-                <font color="#1c487f">fdsfsdfsgsdfgsd</font>
+            <p id="content">
+
             </p>
-            <ul>
-                <li>fdf</li>
-                <li>fdfd</li>
-                <li><span style="background-color: rgb(194, 79, 74);">fdfdf</span></li>
-                <li><br></li>
-            </ul>
         </div>
         <hr>
         <div class="footer" style="text-align:center;font-size: 14px; color: #999;margin:10px 0;">
@@ -103,5 +76,83 @@
 </body>
 <script src="./js/jquery.js"></script>
 <script src="./bootstrap/js/bootstrap.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/layui/2.6.8/layui.js"></script>
+<script src="https://momentjs.bootcss.com/downloads/moment.min.js"></script>
+<script>
+    let url = location.href; // 链接地址
+    // let reg = /\?id=(\d+)/; // 正则匹配 ?id=1数字，一次或者多次
+    let reg = /\?id=(.+)\&?/; // 万能匹配
+    let [,id] = Array.from(url.match(reg)); // 伪数组转为真数组,用逗号舍去第一个,并把id解构
+    if(isNaN(parseInt(id))){
+        // not a number  说明不是数字
+        layer.msg('请求错误')
+        location.href = '/'
+    }
+    function loadArticle(id){
+        $.get('http://127.0.0.1:3696/api/detail',{id},res=>{
+            console.log(res) // {}
+            // 空对象，打回到首页
+            if(JSON.stringify(res)=== '{}'){
+                location.href = '/'
+                return;
+            }
+            let {name,title,author,cat_id,img,content,addtime} = res
+            addtime = (moment(addtime).format('YYYY-MM-DD h:mm:ss'))
+            // 渲染页面
+            let htmlStr = `
+                            <h4 class="crumbs" style="text-align:left;">当前位置：首页 / ${name} / ${title}</h4>
+                            <h3>${title}</h3>
+                            <div style="font-size: 14px; color: #999;"> ${addtime} /
+                                分类：${name} / 点赞：888 / 作者: ${author}
+                            </div>
+            `
+            $("#info").html(htmlStr)
+            $("#content").html(content)
+            if(img){
+                $("#img").attr('src','http://127.0.0.1:3696/' + img)
+            }else{
+                // 设置默认图片
+            }
+        },'json')
+    }
+   
 
+    // 渲染头部的分类数据
+    // 渲染分类数据
+	function renderCate(cates){
+		let lis = '';
+		cates.forEach((cat) => {
+			let {id,name} = cat;
+			// 拼接字符串li
+			lis += `<li><a href="/cate.html?cat_id=${id}">${name}</a></li>`
+		});
+
+		return lis;
+	}
+
+    // 获取分类
+    function loadCate(){
+        // $.ajax此函数返回的是一个promise
+       return $.ajax({
+            url:'http://127.0.0.1:3696/api/cate'
+        })
+    }
+
+    loadArticle(id)
+
+    // 获取本地存储中的分类数据
+   let cates =  JSON.parse(localStorage.getItem('cates') || '[]' );  // 不写[]会打印null,这样可以容错
+//    console.log(cates)
+
+    // 如果有则读取本地的缓存，否则重新获取在存入本地存储
+    if(cates.length){
+        let lis = renderCate(cates);
+        $("#cates").html(lis)
+    }else{
+        loadCate().then(res=>{
+            let lis = renderCate(res);
+            $("#cates").html(lis)
+        })
+    }
+</script>
 </html>
